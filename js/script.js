@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
     
     // Timer
 
-    const deadline = '2022-06-11';
+    const deadline = '2023-06-11';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -219,10 +219,23 @@ window.addEventListener('DOMContentLoaded', function() {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) =>{
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -244,14 +257,7 @@ window.addEventListener('DOMContentLoaded', function() {
             formData.forEach(function(value, key){
                 object[key] = value;
             });
-
-            fetch('server.php',{
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            })
+            postData('http://localhost:3000/requests', JSON.stringify(object))
             .then(data => data.text())
             .then(data =>{
                     console.log(data);
@@ -301,6 +307,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
     fetch('http://localhost:3000/menu')
     .then(data => data.json())
-    .then(res => console.log(res))
+    .then(res => console.log(res));
     
 });
